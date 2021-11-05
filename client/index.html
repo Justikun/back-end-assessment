@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Back End Assessment</title>
+  </head>
+  <body class="container" style="display: flex; flex-direction: column; height: 300px; width: 200px; justify-content: space-evenly; ">
+    <button id="complimentButton">Get a compliment</button>
+    <button id="fortuneButton">Get a Fotune</button>
+    <div style="display: flex; flex-direction: column;">
+      <textarea id="complimentTextBox" placeholder="Type here"></textarea>
+      <button id="newComplimentButton">Add New Compliment</button>
+    </div>
+    <button id="viewComplimentsButton">View Compliment List</button>
+    <button id="removeComplimentButton">Remove Last Compliment</button>
+
+    </button>
+    
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+
+      document.getElementById("removeComplimentButton").onclick = function () {
+        axios.delete("http://localhost:4000/api/compliment/removeLast")
+        .then(response => {
+          alert(`"${response.data}" removed`)
+        })
+      }
+
+      document.getElementById("viewComplimentsButton").onclick = function () {
+        axios.get("http://localhost:4000/api/compliments/")
+        .then(function (response) {
+          // show data in a readable format
+          let text = ""
+          
+          for (let i = 0; i < response.data.length; i++) {
+            // console.log(response.data[i])
+            text = text + response.data[i] + '\n'
+          }
+          console.log(text)
+          alert(text)
+        })
+      }
+
+      document.getElementById("complimentButton").onclick = function () {
+        axios.get("http://localhost:4000/api/compliment/")
+            .then(function (response) {
+              const data = response.data;
+              alert(data);
+            });
+      };
+
+      document.getElementById("fortuneButton").onclick = function () {
+        axios.get("http://localhost:4000/api/fortune/")
+        .then(function (response) {
+          alert(response.data)
+        })
+      }
+
+      //creating a new compliment
+
+        function addComplimentHandler() {
+          let text = document.querySelector('#complimentTextBox')
+          
+          let complimentObject = {
+            text: text.value
+          } 
+          
+          text.value = ""
+
+          addCopmliment(complimentObject)
+        }
+
+      const addCopmliment = (body) => {
+        axios.post("http://localhost:4000/api/compliment/add/", body)
+        .then(function (response) {
+          alert(`"${response.data.text}" was added.`)
+        })
+      }
+      
+      document.getElementById("newComplimentButton").addEventListener('click', addComplimentHandler)
+      
+    </script>
+  </body>
+</html>
